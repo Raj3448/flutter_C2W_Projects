@@ -1,0 +1,18 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Dart & Flutter",
+            "request": "launch",
+            "type": "dart",
+            "program": "demo1.dart",
+            "windows": {
+                "program": "E:/Raj/Flutter setup/flutter/bin/flutter.bat", // Adjust the path to flutter.bat on Windows
+            },
+            "preLaunchTask": "flutter: build desktop",
+        }
+    ]
+}
