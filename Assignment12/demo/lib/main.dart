@@ -1,8 +1,8 @@
-import 'package:demo/rowAssignment.dart';
+import 'package:demo/tiranga_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const RowMainApp());
+  runApp(const Tiranga());
 }
 
 class MainApp extends StatelessWidget {
@@ -11,6 +11,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      
       home: Scaffold(
           body: SizedBox(
               height: double.infinity,
