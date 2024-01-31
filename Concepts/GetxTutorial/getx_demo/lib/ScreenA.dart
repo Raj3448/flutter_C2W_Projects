@@ -17,7 +17,8 @@ class ScreenA extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                Get.back(result: "From Raj");
+                // Get.back(result: "From Raj");
+                Get.toNamed('/page1');
               },
               child: Container(
                 height: 100,
