@@ -1,22 +1,27 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:demo/app_theme.dart';
+import 'package:demo/model/todomodel.dart';
+import 'package:demo/provider/to_do_provider.dart';
+import 'package:demo/shared/widgets/bottom_model_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zapx/zapx.dart';
 
 class ToDoItem extends StatelessWidget {
+  final ToDoModel toDoModel;
   final Color color;
   const ToDoItem({
     Key? key,
+    required this.toDoModel,
     required this.color,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
     return Card(
+      elevation: 5,
       child: Center(
         child: Container(
-          height: screenSize.height * 0.26,
           width: double.infinity,
           decoration: BoxDecoration(
               color: color, borderRadius: BorderRadius.circular(10)),
@@ -32,14 +37,14 @@ class ToDoItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Lorem Ipsum is simply setting industry. ',
+                      toDoModel.title,
                       style: AppTheme.copyWith(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: Colors.black),
                     ),
                     Text(
-                      'Simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s',
+                      toDoModel.description,
                       style: AppTheme.copyWith(
                           fontSize: 15, fontWeight: FontWeight.w500),
                     )
@@ -48,8 +53,8 @@ class ToDoItem extends StatelessWidget {
               ),
               Row(
                 children: [
-                  const Text(
-                    '25/2/2024',
+                  Text(
+                    toDoModel.datetime,
                     style: AppTheme.displayMedium,
                   ),
                   const Spacer(),
@@ -58,9 +63,17 @@ class ToDoItem extends StatelessWidget {
                     child: Row(
                       children: [
                         IconButton(
-                            onPressed: () {}, icon: const Icon(Icons.edit)),
+                            onPressed: () async{
+                              ToDoModel existingItem = Provider.of<ToDoProvider>(context)
+                                  .getToDoItem(toDoModel.id);
+                              await showBottomSheetCustom(context: context, globalKey: globalKey, titleController: titleController, titleFocusNode: titleFocusNode, descriptionController: descriptionController, descriptionFocusNode: descriptionFocusNode, datetimeController: datetimeController, dateTimeFocusNode: dateTimeFocusNode)
+                            },
+                            icon: const Icon(Icons.edit)),
                         IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Provider.of<ToDoProvider>(context, listen: false)
+                                  .removeToDoItem(toDoModel.id);
+                            },
                             icon: const Icon(Icons.delete_outline_rounded))
                       ],
                     ),
