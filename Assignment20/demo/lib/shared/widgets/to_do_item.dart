@@ -9,10 +9,24 @@ import 'package:zapx/zapx.dart';
 
 class ToDoItem extends StatelessWidget {
   final ToDoModel toDoModel;
+  final GlobalKey<FormState> globalKey;
+  final TextEditingController titleController;
+  final FocusNode titleFocusNode;
+  final TextEditingController descriptionController;
+  final FocusNode descriptionFocusNode;
+  final TextEditingController datetimeController;
+  final FocusNode dateTimeFocusNode;
   final Color color;
   const ToDoItem({
     Key? key,
     required this.toDoModel,
+    required this.globalKey,
+    required this.titleController,
+    required this.titleFocusNode,
+    required this.descriptionController,
+    required this.descriptionFocusNode,
+    required this.datetimeController,
+    required this.dateTimeFocusNode,
     required this.color,
   }) : super(key: key);
 
@@ -63,10 +77,25 @@ class ToDoItem extends StatelessWidget {
                     child: Row(
                       children: [
                         IconButton(
-                            onPressed: () async{
-                              ToDoModel existingItem = Provider.of<ToDoProvider>(context)
-                                  .getToDoItem(toDoModel.id);
-                              await showBottomSheetCustom(context: context, globalKey: globalKey, titleController: titleController, titleFocusNode: titleFocusNode, descriptionController: descriptionController, descriptionFocusNode: descriptionFocusNode, datetimeController: datetimeController, dateTimeFocusNode: dateTimeFocusNode)
+                            onPressed: () async {
+                              ToDoModel existingItem =
+                                  Provider.of<ToDoProvider>(context,
+                                          listen: false)
+                                      .getToDoItem(toDoModel.id);
+                              print(existingItem.title);
+                              titleController.text = existingItem.title;
+                              descriptionController.text =
+                                  existingItem.description;
+                              datetimeController.text = existingItem.datetime;
+                              await showBottomSheetCustom(
+                                  context: context,
+                                  globalKey: globalKey,
+                                  titleController: titleController,
+                                  titleFocusNode: titleFocusNode,
+                                  descriptionController: descriptionController,
+                                  descriptionFocusNode: descriptionFocusNode,
+                                  datetimeController: datetimeController,
+                                  dateTimeFocusNode: dateTimeFocusNode);
                             },
                             icon: const Icon(Icons.edit)),
                         IconButton(

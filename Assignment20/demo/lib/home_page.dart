@@ -1,12 +1,10 @@
 import 'package:demo/app_theme.dart';
-import 'package:demo/model/todomodel.dart';
 import 'package:demo/provider/to_do_provider.dart';
 import 'package:demo/shared/widgets/bottom_model_sheet.dart';
 import 'package:demo/shared/widgets/to_do_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:zapx/zapx.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({
@@ -78,20 +76,30 @@ class MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (context, index) => ToDoItem(
                         color: colorList[index % colorList.length],
                         toDoModel: todos.getTodoModelList[index],
+                        dateTimeFocusNode: _dateTimeFocusNode,
+                        datetimeController: datetimeController,
+                        descriptionController: descriptionController,
+                        descriptionFocusNode: _descriptionFocusNode,
+                        globalKey: _globalKey,
+                        titleController: titleController,
+                        titleFocusNode: _titleFocusNode,
                       )),
         );
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await showBottomSheetCustom(context: context,
-          dateTimeFocusNode: _dateTimeFocusNode,
-          datetimeController: datetimeController,
-          descriptionController: descriptionController,
-          descriptionFocusNode: _descriptionFocusNode,
-          globalKey: _globalKey,
-          titleController: titleController,
-          titleFocusNode: _titleFocusNode
-          );
+          titleController.clear();
+          descriptionController.clear();
+          datetimeController.clear();
+          await showBottomSheetCustom(
+              context: context,
+              dateTimeFocusNode: _dateTimeFocusNode,
+              datetimeController: datetimeController,
+              descriptionController: descriptionController,
+              descriptionFocusNode: _descriptionFocusNode,
+              globalKey: _globalKey,
+              titleController: titleController,
+              titleFocusNode: _titleFocusNode);
         },
         backgroundColor: AppTheme.primaryColor,
         child: const Icon(
@@ -102,6 +110,4 @@ class MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
-
 }
