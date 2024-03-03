@@ -5,6 +5,7 @@ import 'package:demo/shared/widgets/to_do_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:zapx/zapx.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({
@@ -28,9 +29,11 @@ class MyHomePageState extends State<MyHomePage> {
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _descriptionFocusNode = FocusNode();
   final FocusNode _dateTimeFocusNode = FocusNode();
+  final FocusNode _amonutFocusNode = FocusNode();
   TextEditingController datetimeController = TextEditingController();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController amountController = TextEditingController();
 
   void dateSelection(BuildContext context) {
     showDatePicker(
@@ -53,45 +56,68 @@ class MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppTheme.primaryColor,
-        title: Text(
-          'To Do List',
-          style: AppTheme.copyWith(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
-        ),
+      backgroundColor: AppTheme.primaryColor,
+      body: Column(
+        children: [
+          Container(
+            height: MediaQuery.of(context).size.height * 0.1,
+            decoration: const BoxDecoration(color: AppTheme.primaryColor),
+            child: Row(
+              children: [
+                Text(
+                  'Self Expense Manager',
+                  textAlign: TextAlign.left,
+                  style: AppTheme.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22),
+                ).paddingOnly(left: 20, top: 10),
+              ],
+            ),
+          ),
+          Consumer<ToDoProvider>(builder: (context, todos, child) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.9,
+              decoration: const BoxDecoration(
+                  color: AppTheme.secondaryColor,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20))),
+              child: todos.getTodoModelList.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No any expense yet...!',
+                        style: AppTheme.displayLarge,
+                      ),
+                    )
+                  : ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: todos.getTodoModelList.length,
+                      itemBuilder: (context, index) => ToDoItem(
+                            color: colorList[index % colorList.length],
+                            toDoModel: todos.getTodoModelList[index],
+                            dateTimeFocusNode: _dateTimeFocusNode,
+                            datetimeController: datetimeController,
+                            descriptionController: descriptionController,
+                            descriptionFocusNode: _descriptionFocusNode,
+                            globalKey: _globalKey,
+                            titleController: titleController,
+                            titleFocusNode: _titleFocusNode,
+                            amountController: amountController,
+                            amountFocusNode: _amonutFocusNode,
+                          )),
+            );
+          }),
+        ],
       ),
-      body: Consumer<ToDoProvider>(builder: (context, todos, child) {
-        return SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: todos.getTodoModelList.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No any to do item yet...!',
-                    style: AppTheme.displayLarge,
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: todos.getTodoModelList.length,
-                  itemBuilder: (context, index) => ToDoItem(
-                        color: colorList[index % colorList.length],
-                        toDoModel: todos.getTodoModelList[index],
-                        dateTimeFocusNode: _dateTimeFocusNode,
-                        datetimeController: datetimeController,
-                        descriptionController: descriptionController,
-                        descriptionFocusNode: _descriptionFocusNode,
-                        globalKey: _globalKey,
-                        titleController: titleController,
-                        titleFocusNode: _titleFocusNode,
-                      )),
-        );
-      }),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           titleController.clear();
           descriptionController.clear();
           datetimeController.clear();
+          amountController.clear();
           await showBottomSheetCustom(
+              isForUpdate: false,
               context: context,
               dateTimeFocusNode: _dateTimeFocusNode,
               datetimeController: datetimeController,
@@ -99,7 +125,9 @@ class MyHomePageState extends State<MyHomePage> {
               descriptionFocusNode: _descriptionFocusNode,
               globalKey: _globalKey,
               titleController: titleController,
-              titleFocusNode: _titleFocusNode);
+              titleFocusNode: _titleFocusNode,
+              amountFocusNode: _amonutFocusNode,
+              amountController: amountController);
         },
         backgroundColor: AppTheme.primaryColor,
         child: const Icon(

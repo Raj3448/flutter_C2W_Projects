@@ -7,27 +7,42 @@ import 'package:provider/provider.dart';
 import 'package:zapx/zapx.dart';
 
 Future<void> showBottomSheetCustom(
-    {required BuildContext context,
+    {required bool isForUpdate,
+    String? editItemId,
+    required BuildContext context,
     required GlobalKey<FormState> globalKey,
     required TextEditingController titleController,
     required FocusNode titleFocusNode,
     required TextEditingController descriptionController,
     required FocusNode descriptionFocusNode,
     required TextEditingController datetimeController,
+    required FocusNode amountFocusNode,
+    required TextEditingController amountController,
     required FocusNode dateTimeFocusNode}) async {
   void submit(BuildContext context) {
-    globalKey.currentState!.save();
-    ToDoModel newTask = ToDoModel(
-        datetime: datetimeController.text,
-        description: descriptionController.text,
-        title: titleController.text,
-        id: DateTime.now().toIso8601String());
-    Provider.of<ToDoProvider>(context, listen: false).addToDoItem(newTask);
-    print('Item added successfully');
+    if (isForUpdate) {
+      Provider.of<ToDoProvider>(context, listen: false).updateItem(ToDoModel(
+          id: editItemId!,
+          title: titleController.text,
+          description: descriptionController.text,
+          datetime: datetimeController.text,
+          amount: amountController.text));
+      print("Item Edited Successfully");
+    } else {
+      globalKey.currentState!.save();
+      ToDoModel newTask = ToDoModel(
+          datetime: datetimeController.text,
+          description: descriptionController.text,
+          title: titleController.text,
+          id: DateTime.now().toIso8601String(),
+          amount: amountController.text);
+      Provider.of<ToDoProvider>(context, listen: false).addToDoItem(newTask);
+      print('Item added successfully');
 
-    titleController.clear();
-    descriptionController.clear();
-    datetimeController.clear();
+      titleController.clear();
+      descriptionController.clear();
+      datetimeController.clear();
+    }
   }
 
   void dateSelection(
@@ -105,6 +120,7 @@ Future<void> showBottomSheetCustom(
                             borderRadius: BorderRadius.circular(10))),
                     onFieldSubmitted: (value) {
                       titleFocusNode.unfocus();
+                      FocusScope.of(context).requestFocus(descriptionFocusNode);
                     },
                   ),
                   const SizedBox(
@@ -147,6 +163,52 @@ Future<void> showBottomSheetCustom(
                             borderRadius: BorderRadius.circular(10))),
                     onFieldSubmitted: (value) {
                       descriptionFocusNode.unfocus();
+                      FocusScope.of(context).requestFocus(amountFocusNode);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: amountController,
+                    focusNode: amountFocusNode,
+                    style: const TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                    textInputAction: TextInputAction.done,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Field is empty';
+                      }
+                      if (double.tryParse(value) == null) {
+                        return 'Invalid Field plz nter number';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        label: const Text('Amount'),
+                        labelStyle: AppTheme.copyWith(
+                          color: AppTheme.primaryColor,
+                        ),
+                        fillColor: Colors.white24,
+                        filled: true,
+                        border: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(width: 1, color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10)),
+                        helperStyle:
+                            const TextStyle(color: AppTheme.primaryColor),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 10.0),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(width: 1, color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                                width: 1, color: AppTheme.primaryColor),
+                            borderRadius: BorderRadius.circular(10))),
+                    onFieldSubmitted: (value) {
+                      titleFocusNode.unfocus();
                     },
                   ),
                   const SizedBox(

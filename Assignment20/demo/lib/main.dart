@@ -3,7 +3,6 @@ import 'package:demo/provider/to_do_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -19,7 +18,6 @@ class MyApp extends StatelessWidget {
             create: (context) => ToDoProvider())
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
