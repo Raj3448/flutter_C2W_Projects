@@ -22,7 +22,7 @@ class AppTheme {
       {String fontFamily = 'MyUniqueFont',
       double fontSize = 16,
       FontWeight fontWeight = FontWeight.w500,
-      Color color = Colors.black54,
+      Color color = Colors.white,
       TextOverflow? overflow}) {
     return TextStyle(
         fontFamily: fontFamily,

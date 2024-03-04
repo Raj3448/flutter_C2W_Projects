@@ -2,6 +2,7 @@ import 'package:demo/app_theme.dart';
 import 'package:demo/provider/to_do_provider.dart';
 import 'package:demo/shared/widgets/bottom_model_sheet.dart';
 import 'package:demo/shared/widgets/to_do_item.dart';
+import 'package:demo/sticky_header.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,7 @@ class MyHomePageState extends State<MyHomePage> {
   ];
 
   final GlobalKey<FormState> _globalKey = GlobalKey();
+  final globalKeyScreen = GlobalKey();
 
   final FocusNode _titleFocusNode = FocusNode();
   final FocusNode _descriptionFocusNode = FocusNode();
@@ -53,102 +55,148 @@ class MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  ScrollController _scrollController = ScrollController();
+  bool _showTitle = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final currentPosition = _scrollController.position.pixels;
+    const flexibleSpaceHeight = 200.0;
+
+    setState(() {
+      _showTitle = currentPosition >= flexibleSpaceHeight;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.primaryColor,
-      body: Column(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height * 0.2,
-            decoration: const BoxDecoration(color: AppTheme.primaryColor),
-            child: Row(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Good Morning,',
-                      textAlign: TextAlign.left,
-                      style: AppTheme.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22),
-                    ).paddingOnly(left: 20, top: 10),
-                    const Text(
-                      'Rajkumar',
+      body: Container(
+        color: AppTheme.primaryColor,
+        height: double.infinity,
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              expandedHeight: 150,
+              backgroundColor: AppTheme.primaryColor,
+              title: _showTitle
+                  ? const Text(
+                      'Good Morning, Rajkumar',
                       style: AppTheme.displayLarge,
-                    ).paddingOnly(
-                      left: 20,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Stack(
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.8,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 205, 204, 204),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20))),
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Text(
-                      'Create To Do List',
-                      style: AppTheme.copyWith(color: Colors.black),
-                    ),
-                  ],
-                ),
-              ),
-              Positioned.fill(
-                top: MediaQuery.of(context).size.height * 0.1,
-                child: Consumer<ToDoProvider>(builder: (context, todos, child) {
-                  return Container(
-                    height: MediaQuery.of(context).size.height * 0.7,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                        color: AppTheme.secondaryColor,
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20))),
-                    child: todos.getTodoModelList.isEmpty
-                        ? const Center(
-                            child: Text(
-                              'No any expense yet...!',
-                              style: AppTheme.displayLarge,
+                    )
+                  : null,
+              flexibleSpace: !_showTitle
+                  ? FlexibleSpaceBar(
+                      background: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Good Morning',
+                            style: AppTheme.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
                             ),
+                          ),
+                          const Text(
+                            'Rajkumar',
+                            style: AppTheme.displayLarge,
                           )
-                        : ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: todos.getTodoModelList.length,
-                            itemBuilder: (context, index) => ToDoItem(
-                                  color: colorList[index % colorList.length],
-                                  toDoModel: todos.getTodoModelList[index],
-                                  dateTimeFocusNode: _dateTimeFocusNode,
-                                  datetimeController: datetimeController,
-                                  descriptionController: descriptionController,
-                                  descriptionFocusNode: _descriptionFocusNode,
-                                  globalKey: _globalKey,
-                                  titleController: titleController,
-                                  titleFocusNode: _titleFocusNode,
-                                  amountController: amountController,
-                                  amountFocusNode: _amonutFocusNode,
-                                )),
-                  );
-                }),
-              ),
-            ],
-          ),
-        ],
+                        ],
+                      ).paddingOnly(left: 20),
+                    )
+                  : null,
+            ),
+            // Container(
+            //   height: MediaQuery.of(context).size.height * 0.2,
+            //   decoration: const BoxDecoration(color: AppTheme.primaryColor),
+            //   child: Row(
+            //     children: [
+            //       Column(
+            //         mainAxisAlignment: MainAxisAlignment.center,
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           Text(
+            //             'Good Morning,',
+            //             textAlign: TextAlign.left,
+            //             style: AppTheme.copyWith(
+            //                 color: Colors.white,
+            //                 fontWeight: FontWeight.bold,
+            //                 fontSize: 22),
+            //           ).paddingOnly(left: 20, top: 10),
+            //           const Text(
+            //             'Rajkumar',
+            //             style: AppTheme.displayLarge,
+            //           ).paddingOnly(
+            //             left: 20,
+            //           ),
+            //         ],
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            const StickyHeader(
+                color: Color(0xFFC3C3C3), title: 'Create To Do List'),
+            SliverList(
+                delegate: SliverChildListDelegate([
+              Consumer<ToDoProvider>(builder: (context, todos, child) {
+                return Container(
+                  padding: EdgeInsets.only(top: _showTitle ? 60 : 0),
+                  height: MediaQuery.of(context).size.height,
+                  decoration: const BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                            spreadRadius: 30,
+                            color: Color(0xFFC3C3C3),
+                            blurStyle: BlurStyle.inner)
+                      ],
+                      color: AppTheme.secondaryColor,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30))),
+                  child: todos.getTodoModelList.isEmpty
+                      ? Text(
+                          'No any expense yet...!',
+                          style: AppTheme.copyWith(color: Colors.black87),
+                          textAlign: TextAlign.center,
+                        ).paddingOnly(
+                          top: MediaQuery.of(context).size.height * 0.3)
+                      : ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: todos.getTodoModelList.length,
+                          itemBuilder: (context, index) => ToDoItem(
+                                color: colorList[index % colorList.length],
+                                toDoModel: todos.getTodoModelList[index],
+                                dateTimeFocusNode: _dateTimeFocusNode,
+                                datetimeController: datetimeController,
+                                descriptionController: descriptionController,
+                                descriptionFocusNode: _descriptionFocusNode,
+                                globalKey: _globalKey,
+                                titleController: titleController,
+                                titleFocusNode: _titleFocusNode,
+                                amountController: amountController,
+                                amountFocusNode: _amonutFocusNode,
+                              )),
+                );
+              })
+            ])),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
