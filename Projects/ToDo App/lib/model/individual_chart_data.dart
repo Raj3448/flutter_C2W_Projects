@@ -1,5 +1,5 @@
 class IndividualChartData {
-  final double x; //for position
+  final int x; //for position
   final double y; //for amount
   final String day; //for day
 

@@ -2,7 +2,12 @@ import 'dart:math';
 
 import 'package:demo/app_theme.dart';
 import 'package:demo/model/todomodel.dart';
+import 'package:demo/provider/to_do_provider.dart';
+import 'package:demo/shared/widgets/bottom_model_sheet.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
 import 'package:zapx/zapx.dart';
 
 class ToDoItem extends StatefulWidget {
@@ -56,55 +61,81 @@ class _ToDoItemState extends State<ToDoItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
+    return Slidable(
       key: ValueKey(widget.toDoModel.id),
-      background: Container(
-        color: Colors.white,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.all(10),
-        margin: const EdgeInsets.symmetric(
-          vertical: 5,
-          horizontal: 15,
+      direction: Axis.horizontal,
+      closeOnScroll: false,
+      dragStartBehavior: DragStartBehavior.down,
+      endActionPane: ActionPane(
+        motion: const StretchMotion(),
+        dismissible: DismissiblePane(
+          onDismissed: () {
+            // Call the onDismissed callback passed from the parent
+            //widget.onDismissed?.call();
+          },
         ),
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () {},
-              child: CircleAvatar(
-                  backgroundColor: AppTheme.primaryColor,
-                  radius: 20,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () async {
+                  ToDoModel existingItem =
+                      Provider.of<ToDoProvider>(context, listen: false)
+                          .getToDoItem(widget.toDoModel.id);
+                  print(existingItem.title);
+                  widget.titleController.text = existingItem.title;
+                  widget.descriptionController.text = existingItem.description;
+                  widget.datetimeController.text = existingItem.datetime;
+                  widget.amountController.text = existingItem.amount;
+                  await showBottomSheetCustom(
+                      editItemId: existingItem.id,
+                      isForUpdate: true,
+                      context: context,
+                      globalKey: widget.globalKey,
+                      titleController: widget.titleController,
+                      titleFocusNode: widget.titleFocusNode,
+                      descriptionController: widget.descriptionController,
+                      descriptionFocusNode: widget.descriptionFocusNode,
+                      datetimeController: widget.datetimeController,
+                      dateTimeFocusNode: widget.dateTimeFocusNode,
+                      amountFocusNode: widget.amountFocusNode,
+                      amountController: widget.amountController);
+                },
+                child: Container(
+                  height: 60,
+                  decoration: const BoxDecoration(
+                      color: AppTheme.primaryColor, shape: BoxShape.circle),
                   child: const Icon(
                     Icons.edit,
                     color: AppTheme.secondaryColor,
-                  )),
-            )
-          ],
-        ),
+                  ).paddingAll(5),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Provider.of<ToDoProvider>(context, listen: false)
+                      .removeToDoItem(widget.toDoModel.id);
+                },
+                child: Container(
+                  height: 60,
+                  decoration: const BoxDecoration(
+                      color: AppTheme.primaryColor, shape: BoxShape.circle),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: AppTheme.secondaryColor,
+                  ).paddingAll(5),
+                ),
+              ),
+            ],
+          )
+        ],
       ),
-      direction: DismissDirection.endToStart,
-      confirmDismiss: (direction) {
-        return showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-                  title: const Text('Do you want to remove cart item ?'),
-                  content: const Text('Are you sure ?'),
-                  actions: [
-                    FloatingActionButton(
-                      child: const Text('Yes'),
-                      onPressed: () => Navigator.of(ctx).pop(true),
-                    ),
-                    FloatingActionButton(
-                      child: const Text('No'),
-                      onPressed: () => Navigator.of(ctx).pop(false),
-                    ),
-                  ],
-                ));
-      },
       child: Card(
         elevation: 5,
         child: Center(
           child: Container(
-            width: double.infinity,
+            //width: double.infinity,
             decoration: BoxDecoration(
                 color: widget.color, borderRadius: BorderRadius.circular(10)),
             child: Column(
@@ -151,11 +182,14 @@ class _ToDoItemState extends State<ToDoItem> {
                             Text(
                               widget.toDoModel.description,
                               style: AppTheme.copyWith(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black),
                             ),
                             Text(
                               widget.toDoModel.datetime,
-                              style: AppTheme.copyWith(fontSize: 12),
+                              style: AppTheme.copyWith(
+                                  fontSize: 14, color: Colors.black38),
                             ),
                           ],
                         ),

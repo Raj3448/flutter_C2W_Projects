@@ -1,6 +1,7 @@
 import 'package:demo/app_theme.dart';
 import 'package:demo/provider/to_do_provider.dart';
 import 'package:demo/shared/widgets/bottom_model_sheet.dart';
+import 'package:demo/shared/widgets/my_bar_graph_chart.dart';
 import 'package:demo/shared/widgets/to_do_item.dart';
 import 'package:demo/sticky_header.dart';
 import 'package:flutter/material.dart';
@@ -170,28 +171,54 @@ class MyHomePageState extends State<MyHomePage> {
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30))),
                   child: todos.getTodoModelList.isEmpty
-                      ? Text(
-                          'No any expense yet...!',
-                          style: AppTheme.copyWith(color: Colors.black87),
-                          textAlign: TextAlign.center,
-                        ).paddingOnly(
-                          top: MediaQuery.of(context).size.height * 0.3)
-                      : ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: todos.getTodoModelList.length,
-                          itemBuilder: (context, index) => ToDoItem(
-                                color: colorList[index % colorList.length],
-                                toDoModel: todos.getTodoModelList[index],
-                                dateTimeFocusNode: _dateTimeFocusNode,
-                                datetimeController: datetimeController,
-                                descriptionController: descriptionController,
-                                descriptionFocusNode: _descriptionFocusNode,
-                                globalKey: _globalKey,
-                                titleController: titleController,
-                                titleFocusNode: _titleFocusNode,
-                                amountController: amountController,
-                                amountFocusNode: _amonutFocusNode,
-                              )),
+                      ? !_showTitle
+                          ? Text(
+                              'No any expense yet...!',
+                              style: AppTheme.copyWith(color: Colors.black87),
+                              textAlign: TextAlign.center,
+                            ).paddingOnly(
+                              top: MediaQuery.of(context).size.height * 0.3)
+                          : Center(
+                              child: Text(
+                                'No any expense yet...!',
+                                style: AppTheme.copyWith(color: Colors.black87),
+                                textAlign: TextAlign.center,
+                              ).paddingOnly(top: 0),
+                            )
+                      : Column(
+                          children: [
+                            Container(
+                              //padding: EdgeInsets.only(bottom: 10),
+                              color: AppTheme.secondaryColor,
+                              height: 200,
+                              child: const MyBarGraphChart(),
+                            ).paddingOnly(left: 3, right: 3, top: 30),
+                            Expanded(
+                              child: ListView.builder(
+                                  physics: !_showTitle
+                                      ? const NeverScrollableScrollPhysics()
+                                      : const BouncingScrollPhysics(),
+                                  itemCount: todos.getTodoModelList.length,
+                                  itemBuilder: (context, index) => ToDoItem(
+                                        color:
+                                            colorList[index % colorList.length],
+                                        toDoModel:
+                                            todos.getTodoModelList[index],
+                                        dateTimeFocusNode: _dateTimeFocusNode,
+                                        datetimeController: datetimeController,
+                                        descriptionController:
+                                            descriptionController,
+                                        descriptionFocusNode:
+                                            _descriptionFocusNode,
+                                        globalKey: _globalKey,
+                                        titleController: titleController,
+                                        titleFocusNode: _titleFocusNode,
+                                        amountController: amountController,
+                                        amountFocusNode: _amonutFocusNode,
+                                      )),
+                            ),
+                          ],
+                        ),
                 );
               })
             ])),

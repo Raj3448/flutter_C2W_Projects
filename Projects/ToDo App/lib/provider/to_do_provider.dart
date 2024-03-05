@@ -1,4 +1,3 @@
-import 'package:demo/model/bar_data.dart';
 import 'package:demo/model/individual_chart_data.dart';
 import 'package:demo/model/todomodel.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +23,7 @@ class ToDoProvider extends ChangeNotifier {
         element.title = instance.title;
         element.datetime = instance.datetime;
         element.description = instance.description;
+        element.amount = instance.amount;
         return true;
       } else {
         return false;
@@ -49,34 +49,29 @@ class ToDoProvider extends ChangeNotifier {
 
   List<IndividualChartData> getChartData() {
     List<ToDoModel> expensList = getExpensesInPrev7Days;
-    List<double> weekAmounts = [];
+    List<double> weekAmounts = List<double>.filled(7, 0.0);
 
     List<IndividualChartData> chartList = List.generate(7, (index) {
       final weekday = DateTime.now().subtract(Duration(days: index));
       for (int i = 0; i < expensList.length; i++) {
         if (weekday.day ==
-                DateFormat("E, M/d/yyyy")
-                    .parse(expensList[index].datetime)
-                    .day &&
+                DateFormat("E, M/d/yyyy").parse(expensList[i].datetime).day &&
             weekday.month ==
-                DateFormat("E, M/d/yyyy")
-                    .parse(expensList[index].datetime)
-                    .month &&
+                DateFormat("E, M/d/yyyy").parse(expensList[i].datetime).month &&
             weekday.year ==
-                DateFormat("E, M/d/yyyy")
-                    .parse(expensList[index].datetime)
-                    .year) {
-          weekAmounts[index] += double.parse(expensList[index].amount.trim());
+                DateFormat("E, M/d/yyyy").parse(expensList[i].datetime).year) {
+          weekAmounts[index] += double.parse(expensList[i].amount.trim());
         }
       }
       return IndividualChartData(
-          x: 0,
+          x: index,
           y: weekAmounts[index],
           day: DateFormat.E().format(weekday).substring(0, 1));
     });
     chartList.forEach((element) {
       print(element.toString());
     });
+
     return chartList;
   }
 }

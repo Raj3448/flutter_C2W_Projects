@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
             create: (context) => ToDoProvider())
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
