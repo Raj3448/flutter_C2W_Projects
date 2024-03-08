@@ -1,54 +1,60 @@
 import 'package:demo/model/individual_chart_data.dart';
-import 'package:demo/model/todomodel.dart';
+import 'package:demo/model/expense_details_model.dart';
+import 'package:demo/services/expensedb_api.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ToDoProvider extends ChangeNotifier {
-  final List<ToDoModel> _todoModelList = [];
+  final List<ExpenseDetailsModel> _todoModelList = [];
 
-  List<ToDoModel> get getTodoModelList {
-    return [..._todoModelList];
+  Future<List<ExpenseDetailsModel>> get getTodoModelList async{
+    return await ExpenseDbApi.getExpenseModelList();
   }
 
-  List<ToDoModel> get getExpensesInPrev7Days =>
-      _todoModelList.where((instance) {
-        return DateFormat("E, M/d/yyyy")
-            .parse(instance.datetime)
-            .isAfter(DateTime.now().subtract(const Duration(days: 7)));
-      }).toList();
+  Future<List<ExpenseDetailsModel>> get getExpensesInPrev7Days async{
+    final reterivedList = await ExpenseDbApi.getExpenseModelList();
+      return reterivedList.where((instance) {
+      return DateFormat("E, M/d/yyyy")
+          .parse(instance.datetime)
+          .isAfter(DateTime.now().subtract(const Duration(days: 7)));
+    }).toList();
+  }
 
-  void updateItem(ToDoModel instance) {
-    _todoModelList.firstWhere((element) {
-      if (element.id == instance.id) {
-        element.title = instance.title;
-        element.datetime = instance.datetime;
-        element.description = instance.description;
-        element.amount = instance.amount;
-        return true;
-      } else {
-        return false;
-      }
-    });
+  void updateItem(ExpenseDetailsModel instance) {
+    // _todoModelList.firstWhere((element) {
+    //   if (element.id == instance.id) {
+    //     element.title = instance.title;
+    //     element.datetime = instance.datetime;
+    //     element.description = instance.description;
+    //     element.amount = instance.amount;
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // });
+    ExpenseDbApi.update(instance);
     notifyListeners();
   }
 
-  void addToDoItem(ToDoModel instance) {
+  void addToDoItem(ExpenseDetailsModel instance) {
     _todoModelList.add(instance);
+    ExpenseDbApi.insert(instance);
     print('Item Added');
     notifyListeners();
   }
 
   void removeToDoItem(String id) {
     _todoModelList.removeWhere((element) => element.id == id);
+    ExpenseDbApi.delete(id);
     notifyListeners();
   }
 
-  ToDoModel getToDoItem(String id) {
-    return _todoModelList.firstWhere((element) => element.id == id);
+  Future<ExpenseDetailsModel> getToDoItem(String id) async {
+    return await ExpenseDbApi.getExpenseModelItem(id);
   }
 
-  List<IndividualChartData> getChartData() {
-    List<ToDoModel> expensList = getExpensesInPrev7Days;
+  Future<List<IndividualChartData>> getChartData() async{
+    List<ExpenseDetailsModel> expensList = await getExpensesInPrev7Days;
     List<double> weekAmounts = List<double>.filled(7, 0.0);
 
     List<IndividualChartData> chartList = List.generate(7, (index) {

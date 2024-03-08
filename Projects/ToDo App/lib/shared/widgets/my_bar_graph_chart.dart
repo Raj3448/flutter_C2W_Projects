@@ -12,56 +12,68 @@ class MyBarGraphChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ToDoProvider>(builder: (context, value, child) {
-      final List<IndividualChartData> myBardata = value.getChartData();
-      List<int> numbers = [0, 1, 2, 3, 4, 5, 6];
-      double largestAmount = -9223372036854775808;
-      for (IndividualChartData data in myBardata) {
-        if (largestAmount < data.y) {
-          largestAmount = data.y;
-        }
-      }
-      print(largestAmount);
-      return BarChart(BarChartData(
-              maxY: largestAmount,
-              minY: 0,
-              gridData: const FlGridData(show: false),
-              borderData: FlBorderData(show: false),
-              titlesData: FlTitlesData(
-                  leftTitles: const AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: false,
-                        //reservedSize: 40,
-                      ),
-                      axisNameSize: 22,
-                      axisNameWidget: Text('             Money Average',
-                          style: AppTheme.displayMedium)),
-                  rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
-                  bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                          reservedSize: 27,
-                          showTitles: true,
-                          getTitlesWidget: getTitleWidget),
-                      axisNameSize: 27,
-                      axisNameWidget: const Text('   Graph of Weekly Day\'s',
-                          style: AppTheme.displayMedium))),
-              barGroups: myBardata
-                  .map((data) => BarChartGroupData(x: data.x + 1, barRods: [
-                        BarChartRodData(
-                            toY: data.y,
-                            width: 12,
-                            backDrawRodData: BackgroundBarChartRodData(
-                                color: Colors.grey[300],
-                                show: true,
-                                toY: largestAmount),
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(3),
-                                topRight: Radius.circular(3)))
-                      ]))
-                  .toList()))
-          .paddingOnly(top: 25, left: 10);
+      return FutureBuilder(
+          future: value.getChartData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            List<int> numbers = [0, 1, 2, 3, 4, 5, 6];
+            double largestAmount = -9223372036854775808;
+            for (IndividualChartData data in snapshot.data!) {
+              if (largestAmount < data.y) {
+                largestAmount = data.y;
+              }
+            }
+            print(largestAmount);
+            return BarChart(BarChartData(
+                    maxY: largestAmount,
+                    minY: 0,
+                    gridData: const FlGridData(show: false),
+                    borderData: FlBorderData(show: false),
+                    titlesData: FlTitlesData(
+                        leftTitles: const AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: false,
+                            ),
+                            axisNameSize: 22,
+                            axisNameWidget: Text('             Money Average',
+                                style: AppTheme.displayMedium)),
+                        rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                                reservedSize: 27,
+                                showTitles: true,
+                                getTitlesWidget: getTitleWidget),
+                            axisNameSize: 27,
+                            axisNameWidget: const Text('   Weekly Day Graph ',
+                                style: AppTheme.displayMedium))),
+                    barGroups: snapshot.data!
+                        .map((data) =>
+                            BarChartGroupData(x: data.x + 1, barRods: [
+                              BarChartRodData(
+                                  toY: data.y,
+                                  gradient: LinearGradient(colors: [
+                                    Color(0xFF03A9F4),
+                                    Color(0xFFB69EF8)
+                                  ]),
+                                  width: 12,
+                                  backDrawRodData: BackgroundBarChartRodData(
+                                      color: Colors.grey[300],
+                                      show: true,
+                                      toY: largestAmount),
+                                  borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(3),
+                                      topRight: Radius.circular(3)))
+                            ]))
+                        .toList()))
+                .paddingOnly(top: 25, left: 10);
+          });
     });
   }
 

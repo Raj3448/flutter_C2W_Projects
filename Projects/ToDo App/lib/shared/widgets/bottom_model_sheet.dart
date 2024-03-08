@@ -1,5 +1,5 @@
 import 'package:demo/app_theme.dart';
-import 'package:demo/model/todomodel.dart';
+import 'package:demo/model/expense_details_model.dart';
 import 'package:demo/provider/to_do_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -21,7 +21,7 @@ Future<void> showBottomSheetCustom(
     required FocusNode dateTimeFocusNode}) async {
   void submit(BuildContext context) {
     if (isForUpdate) {
-      Provider.of<ToDoProvider>(context, listen: false).updateItem(ToDoModel(
+      Provider.of<ToDoProvider>(context, listen: false).updateItem(ExpenseDetailsModel(
           id: editItemId!,
           title: titleController.text,
           description: descriptionController.text,
@@ -30,7 +30,7 @@ Future<void> showBottomSheetCustom(
       print("Item Edited Successfully");
     } else {
       globalKey.currentState!.save();
-      ToDoModel newTask = ToDoModel(
+      ExpenseDetailsModel newTask = ExpenseDetailsModel(
           datetime: datetimeController.text,
           description: descriptionController.text,
           title: titleController.text,

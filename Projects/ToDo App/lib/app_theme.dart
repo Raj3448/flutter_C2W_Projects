@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 class AppTheme {
   const AppTheme();
+  static Database? database;
   static const Color primaryColor = Color(0xFF5939F1);
   static const Color secondaryColor = Color(0xFFFFFFFF);
 

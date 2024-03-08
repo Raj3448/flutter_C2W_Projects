@@ -1,9 +1,12 @@
-import 'package:demo/home_page.dart';
+import 'package:demo/database/database.dart';
+import 'package:demo/pages/home_page.dart';
 import 'package:demo/provider/to_do_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDataBase();
   runApp(const MyApp());
 }
 

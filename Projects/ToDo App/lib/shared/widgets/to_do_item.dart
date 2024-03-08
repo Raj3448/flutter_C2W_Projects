@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:demo/app_theme.dart';
-import 'package:demo/model/todomodel.dart';
+import 'package:demo/model/expense_details_model.dart';
 import 'package:demo/provider/to_do_provider.dart';
 import 'package:demo/shared/widgets/bottom_model_sheet.dart';
 import 'package:flutter/gestures.dart';
@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:zapx/zapx.dart';
 
 class ToDoItem extends StatefulWidget {
-  final ToDoModel toDoModel;
+  final ExpenseDetailsModel toDoModel;
   final GlobalKey<FormState> globalKey;
   final TextEditingController titleController;
   final FocusNode titleFocusNode;
@@ -80,8 +80,8 @@ class _ToDoItemState extends State<ToDoItem> {
             children: [
               InkWell(
                 onTap: () async {
-                  ToDoModel existingItem =
-                      Provider.of<ToDoProvider>(context, listen: false)
+                  ExpenseDetailsModel existingItem =
+                      await Provider.of<ToDoProvider>(context, listen: false)
                           .getToDoItem(widget.toDoModel.id);
                   print(existingItem.title);
                   widget.titleController.text = existingItem.title;
@@ -211,7 +211,7 @@ class _ToDoItemState extends State<ToDoItem> {
                     //     children: [
                     //       IconButton(
                     //           onPressed: () async {
-                    //             ToDoModel existingItem =
+                    //             ExpenseDetailsModel existingItem =
                     //                 Provider.of<ToDoProvider>(context,
                     //                         listen: false)
                     //                     .getToDoItem(widget.toDoModel.id);
