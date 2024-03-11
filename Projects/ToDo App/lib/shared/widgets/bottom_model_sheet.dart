@@ -1,5 +1,6 @@
 import 'package:demo/app_theme.dart';
 import 'package:demo/model/expense_details_model.dart';
+import 'package:demo/model/isar_db/expense_model.dart';
 import 'package:demo/provider/to_do_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -21,8 +22,8 @@ Future<void> showBottomSheetCustom(
     required FocusNode dateTimeFocusNode}) async {
   void submit(BuildContext context) {
     if (isForUpdate) {
-      Provider.of<ToDoProvider>(context, listen: false).updateItem(ExpenseDetailsModel(
-          id: editItemId!,
+      Provider.of<ToDoProvider>(context, listen: false).updateItem(ExpenseModelIsar(
+          //id: editItemId!,
           title: titleController.text,
           description: descriptionController.text,
           datetime: datetimeController.text,
@@ -30,11 +31,11 @@ Future<void> showBottomSheetCustom(
       print("Item Edited Successfully");
     } else {
       globalKey.currentState!.save();
-      ExpenseDetailsModel newTask = ExpenseDetailsModel(
+      ExpenseModelIsar newTask = ExpenseModelIsar(
           datetime: datetimeController.text,
           description: descriptionController.text,
           title: titleController.text,
-          id: DateTime.now().toIso8601String(),
+          //id: DateTime.now().toIso8601String(),
           amount: amountController.text);
       Provider.of<ToDoProvider>(context, listen: false).addToDoItem(newTask);
       print('Item added successfully');

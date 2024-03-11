@@ -1,12 +1,13 @@
-import 'package:demo/database/database.dart';
+import 'package:demo/database/isar_db/isardb.dart';
 import 'package:demo/pages/home_page.dart';
 import 'package:demo/provider/to_do_provider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDataBase();
+  await openDB();
   runApp(const MyApp());
 }
 

@@ -58,7 +58,7 @@ class MyBarGraphChart extends StatelessWidget {
                             BarChartGroupData(x: data.x + 1, barRods: [
                               BarChartRodData(
                                   toY: data.y,
-                                  gradient: LinearGradient(colors: [
+                                  gradient: const LinearGradient(colors: [
                                     Color(0xFF03A9F4),
                                     Color(0xFFB69EF8)
                                   ]),

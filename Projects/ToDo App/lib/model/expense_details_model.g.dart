@@ -6,9 +6,9 @@ part of 'expense_details_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ExpenseDetailsModel _$ToDoModelFromJson(Map<String, dynamic> json) =>
+ExpenseDetailsModel _$ExpenseDetailsModelFromJson(Map<String, dynamic> json) =>
     ExpenseDetailsModel(
-      id: json['id'].toString(),
+      id: json['id'] as String,
       title: json['title'] as String,
       description: json['description'] as String,
       datetime: json['datetime'] as String,
@@ -16,7 +16,8 @@ ExpenseDetailsModel _$ToDoModelFromJson(Map<String, dynamic> json) =>
       storedImage: json['storedImage'] as String? ?? 'assets',
     );
 
-Map<String, dynamic> _$ToDoModelToJson(ExpenseDetailsModel instance) =>
+Map<String, dynamic> _$ExpenseDetailsModelToJson(
+        ExpenseDetailsModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,

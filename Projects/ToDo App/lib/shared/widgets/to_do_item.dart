@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:demo/app_theme.dart';
-import 'package:demo/model/expense_details_model.dart';
+import 'package:demo/model/isar_db/expense_model.dart';
 import 'package:demo/provider/to_do_provider.dart';
 import 'package:demo/shared/widgets/bottom_model_sheet.dart';
 import 'package:flutter/gestures.dart';
@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:zapx/zapx.dart';
 
 class ToDoItem extends StatefulWidget {
-  final ExpenseDetailsModel toDoModel;
+  final ExpenseModelIsar toDoModel;
   final GlobalKey<FormState> globalKey;
   final TextEditingController titleController;
   final FocusNode titleFocusNode;
@@ -80,16 +80,16 @@ class _ToDoItemState extends State<ToDoItem> {
             children: [
               InkWell(
                 onTap: () async {
-                  ExpenseDetailsModel existingItem =
+                  ExpenseModelIsar? existingItem =
                       await Provider.of<ToDoProvider>(context, listen: false)
-                          .getToDoItem(widget.toDoModel.id);
-                  print(existingItem.title);
-                  widget.titleController.text = existingItem.title;
-                  widget.descriptionController.text = existingItem.description;
+                          .getToDoItem(widget.toDoModel.id as String);
+                  print(existingItem?.title);
+                  widget.titleController.text = existingItem!.title;
+                  widget.descriptionController.text = existingItem!.description;
                   widget.datetimeController.text = existingItem.datetime;
                   widget.amountController.text = existingItem.amount;
                   await showBottomSheetCustom(
-                      editItemId: existingItem.id,
+                      editItemId: existingItem.id.toString(),
                       isForUpdate: true,
                       context: context,
                       globalKey: widget.globalKey,
@@ -115,7 +115,8 @@ class _ToDoItemState extends State<ToDoItem> {
               InkWell(
                 onTap: () {
                   Provider.of<ToDoProvider>(context, listen: false)
-                      .removeToDoItem(widget.toDoModel.id);
+                      .removeToDoItem(widget.toDoModel.id.toString());
+                  
                 },
                 child: Container(
                   height: 60,
@@ -211,7 +212,7 @@ class _ToDoItemState extends State<ToDoItem> {
                     //     children: [
                     //       IconButton(
                     //           onPressed: () async {
-                    //             ExpenseDetailsModel existingItem =
+                    //             ExpenseModelIsar existingItem =
                     //                 Provider.of<ToDoProvider>(context,
                     //                         listen: false)
                     //                     .getToDoItem(widget.toDoModel.id);

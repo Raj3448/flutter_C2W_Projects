@@ -31,7 +31,7 @@ class ExpenseDetailsModel {
   }
 
   factory ExpenseDetailsModel.fromJson(Map<String, dynamic> json) =>
-      _$ToDoModelFromJson(json);
+      _$ExpenseDetailsModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ToDoModelToJson(this);
+  Map<String, dynamic> toJson() => _$ExpenseDetailsModelToJson(this);
 }

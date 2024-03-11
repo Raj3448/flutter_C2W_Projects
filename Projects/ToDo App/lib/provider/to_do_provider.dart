@@ -1,26 +1,28 @@
-import 'package:demo/model/individual_chart_data.dart';
 import 'package:demo/model/expense_details_model.dart';
-import 'package:demo/services/expensedb_api.dart';
+import 'package:demo/model/individual_chart_data.dart';
+import 'package:demo/model/isar_db/expense_model.dart';
+import 'package:demo/services/expensedb_isar_api.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ToDoProvider extends ChangeNotifier {
   final List<ExpenseDetailsModel> _todoModelList = [];
 
-  Future<List<ExpenseDetailsModel>> get getTodoModelList async{
-    return await ExpenseDbApi.getExpenseModelList();
+  Future<List<ExpenseModelIsar>> get getTodoModelList async {
+    //return await ExpenseDbApi.getExpenseModelList();
+    return await ExpenseIsarDb().getIsarExpenseModelList();
   }
 
-  Future<List<ExpenseDetailsModel>> get getExpensesInPrev7Days async{
-    final reterivedList = await ExpenseDbApi.getExpenseModelList();
-      return reterivedList.where((instance) {
+  Future<List<ExpenseModelIsar>> get getExpensesInPrev7Days async {
+    final reterivedList = await ExpenseIsarDb().getIsarExpenseModelList();
+    return reterivedList.where((instance) {
       return DateFormat("E, M/d/yyyy")
           .parse(instance.datetime)
           .isAfter(DateTime.now().subtract(const Duration(days: 7)));
     }).toList();
   }
 
-  void updateItem(ExpenseDetailsModel instance) {
+  void updateItem(ExpenseModelIsar instance) {
     // _todoModelList.firstWhere((element) {
     //   if (element.id == instance.id) {
     //     element.title = instance.title;
@@ -32,29 +34,29 @@ class ToDoProvider extends ChangeNotifier {
     //     return false;
     //   }
     // });
-    ExpenseDbApi.update(instance);
+    ExpenseIsarDb().update(instance);
     notifyListeners();
   }
 
-  void addToDoItem(ExpenseDetailsModel instance) {
-    _todoModelList.add(instance);
-    ExpenseDbApi.insert(instance);
+  void addToDoItem(ExpenseModelIsar instance) {
+    //_todoModelList.add(instance);
+    ExpenseIsarDb().insert(instance);
     print('Item Added');
     notifyListeners();
   }
 
   void removeToDoItem(String id) {
     _todoModelList.removeWhere((element) => element.id == id);
-    ExpenseDbApi.delete(id);
+    ExpenseIsarDb().delete(id);
     notifyListeners();
   }
 
-  Future<ExpenseDetailsModel> getToDoItem(String id) async {
-    return await ExpenseDbApi.getExpenseModelItem(id);
+  Future<ExpenseModelIsar?> getToDoItem(String id) async {
+    return await ExpenseIsarDb().getExpenseModelItem(id);
   }
 
-  Future<List<IndividualChartData>> getChartData() async{
-    List<ExpenseDetailsModel> expensList = await getExpensesInPrev7Days;
+  Future<List<IndividualChartData>> getChartData() async {
+    List<ExpenseModelIsar> expensList = await getExpensesInPrev7Days;
     List<double> weekAmounts = List<double>.filled(7, 0.0);
 
     List<IndividualChartData> chartList = List.generate(7, (index) {
